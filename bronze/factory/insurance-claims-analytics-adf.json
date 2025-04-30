@@ -1,0 +1,9 @@
+{
+	"name": "insurance-claims-analytics-adf",
+	"location": "eastus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "5d1c3fba-fddc-4ea0-ae24-110cd896f8ee",
+		"tenantId": "2de55f5c-d003-4d2a-826b-ead2a9f2b9cd"
+	}
+}
