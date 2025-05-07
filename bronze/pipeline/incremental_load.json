@@ -16,16 +16,57 @@
 				"userProperties": [],
 				"typeProperties": {
 					"method": "GET",
-					"datasets": [
+					"url": "https://api.github.com/repos/princeabdul99/End-to-End-Insurance-Claims-Analytics-Using-Azure-Lakehouse-Architecture/contents/datasets/"
+				}
+			},
+			{
+				"name": "ForEach1",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Web1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Web1').output",
+						"type": "Expression"
+					},
+					"isSequential": true,
+					"activities": [
 						{
-							"referenceName": "DelimitedText1",
-							"type": "DatasetReference"
+							"name": "Set variable1",
+							"type": "SetVariable",
+							"dependsOn": [],
+							"policy": {
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "download_url",
+								"value": {
+									"value": "@item()",
+									"type": "Expression"
+								}
+							}
 						}
-					],
-					"url": "https://raw.githubusercontent.com/"
+					]
 				}
 			}
 		],
+		"variables": {
+			"fileName": {
+				"type": "String"
+			},
+			"download_url": {
+				"type": "String"
+			}
+		},
 		"annotations": []
 	}
 }
