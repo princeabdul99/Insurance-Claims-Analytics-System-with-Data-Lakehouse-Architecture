@@ -1,0 +1,10 @@
+{
+	"name": "destination",
+	"properties": {
+		"annotations": [],
+		"type": "AzureBlobFS",
+		"typeProperties": {
+			"url": "https://insurclaimsanalydatalake.dfs.core.windows.net/"
+		}
+	}
+}
