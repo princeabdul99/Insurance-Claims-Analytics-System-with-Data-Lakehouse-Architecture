@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Web1",
+				"name": "GetGithubFiles",
 				"type": "WebActivity",
 				"dependsOn": [],
 				"policy": {
@@ -24,7 +24,7 @@
 				"type": "ForEach",
 				"dependsOn": [
 					{
-						"activity": "Web1",
+						"activity": "GetGithubFiles",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -33,36 +33,86 @@
 				"userProperties": [],
 				"typeProperties": {
 					"items": {
-						"value": "@activity('Web1').output",
+						"value": "@json(activity('GetGithubFiles').output.Response)",
 						"type": "Expression"
 					},
 					"isSequential": true,
 					"activities": [
 						{
-							"name": "Set variable1",
-							"type": "SetVariable",
+							"name": "Copy data1",
+							"type": "Copy",
 							"dependsOn": [],
 							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
 								"secureOutput": false,
 								"secureInput": false
 							},
 							"userProperties": [],
 							"typeProperties": {
-								"variableName": "download_url",
-								"value": {
-									"value": "@item()",
-									"type": "Expression"
+								"source": {
+									"type": "DelimitedTextSource",
+									"storeSettings": {
+										"type": "HttpReadSettings",
+										"requestMethod": "GET"
+									},
+									"formatSettings": {
+										"type": "DelimitedTextReadSettings"
+									}
+								},
+								"sink": {
+									"type": "DelimitedTextSink",
+									"storeSettings": {
+										"type": "AzureBlobFSWriteSettings"
+									},
+									"formatSettings": {
+										"type": "DelimitedTextWriteSettings",
+										"quoteAllText": true,
+										"fileExtension": ".txt"
+									}
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"typeConversion": true,
+									"typeConversionSettings": {
+										"allowDataTruncation": true,
+										"treatBooleanAsNumber": false
+									}
 								}
-							}
+							},
+							"inputs": [
+								{
+									"referenceName": "source_data",
+									"type": "DatasetReference",
+									"parameters": {
+										"fileUrl": {
+											"value": "@replace(item().download_url, 'https://raw.githubusercontent.com', '')",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "bronze_data_sink",
+									"type": "DatasetReference",
+									"parameters": {
+										"p_folder": {
+											"value": "@replace(item().name, '.csv', '')",
+											"type": "Expression"
+										},
+										"p_filename": "@item().name"
+									}
+								}
+							]
 						}
 					]
 				}
 			}
 		],
 		"variables": {
-			"fileName": {
-				"type": "String"
-			},
 			"download_url": {
 				"type": "String"
 			}
